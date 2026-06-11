@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  pull_request:
+  pull_request: {} # 空のままにする場合は中括弧を追加するか、以下のようにブランチを指定します
 
 jobs:
   cfn-lint:
@@ -18,8 +18,4 @@ jobs:
         run: pip install cfn-lint
 
       - name: Run cfn-lint
-        run: cfn-lint cfn/vpc.yaml
-
-
-
-        
+        run: cfn-lint cfn/vpc.yml # 拡張子を .yaml から .yml に修正
