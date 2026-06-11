@@ -18,4 +18,4 @@ jobs:
         run: pip install cfn-lint
 
       - name: Run cfn-lint
-        run: cfn-lint cfn/vpc.yml # 拡張子を .yaml から .yml に修正
+        run: cfn-lint .github/workflows/cfn/vpc.yml # 拡張子を .yaml から .yml に修正
