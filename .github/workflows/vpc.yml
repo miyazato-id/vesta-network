@@ -18,7 +18,7 @@ jobs:
         run: pip install cfn-lint
 
       - name: Run cfn-lint
-        run: cfn-lint cfn/vpc.yaml
+        run: cfn-lint cfn/vpc.yml
 
 
 
