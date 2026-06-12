@@ -1,0 +1,176 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: VESTA Full VPC (3AZ / No IGW NAT TGW VPCE)
+
+Resources:
+
+#################################################
+# VPC1
+#################################################
+
+  VPC1:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      Tags:
+        - Key: Name
+          Value: vpc-jeA0S9V101pr-001
+        - Key: System
+          Value: VESTA
+        - Key: Env
+          Value: pr
+
+#################################################
+# NLB Subnet（3AZ）
+#################################################
+
+  SubnetNlbA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC1
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: subnet-jeA0S9V101pr1a-001
+        - Key: Role
+          Value: NLB
+
+  SubnetNlbC:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC1
+      CidrBlock: 10.0.11.0/24
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: subnet-jeA0S9V101pr1c-001
+        - Key: Role
+          Value: NLB
+
+  SubnetNlbD:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC1
+      CidrBlock: 10.0.21.0/24
+      AvailabilityZone: !Select [2, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: subnet-jeA0S9V101pr1d-001
+        - Key: Role
+          Value: NLB
+
+#################################################
+# ECS Subnet（3AZ）
+#################################################
+
+  SubnetEcsA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC1
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: subnet-jeA0S9V101pr2a-001
+        - Key: Role
+          Value: ECS
+
+  SubnetEcsC:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC1
+      CidrBlock: 10.0.12.0/24
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: subnet-jeA0S9V101pr2c-001
+        - Key: Role
+          Value: ECS
+
+  SubnetEcsD:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC1
+      CidrBlock: 10.0.22.0/24
+      AvailabilityZone: !Select [2, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: subnet-jeA0S9V101pr2d-001
+        - Key: Role
+          Value: ECS
+
+#################################################
+# VPC2
+#################################################
+
+  VPC2:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.1.0.0/16
+      Tags:
+        - Key: Name
+          Value: vpc-jeA0S9V101pr-002
+        - Key: System
+          Value: VESTA
+        - Key: Env
+          Value: pr
+
+#################################################
+# VyOS Subnet（3AZ）
+#################################################
+
+  SubnetVyosA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC2
+      CidrBlock: 10.1.1.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: subnet-jeA0S9V101pr5a-002
+        - Key: Role
+          Value: VyOS
+
+  SubnetVyosC:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC2
+      CidrBlock: 10.1.11.0/24
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: subnet-jeA0S9V101pr5c-002
+        - Key: Role
+          Value: VyOS
+
+  SubnetVyosD:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC2
+      CidrBlock: 10.1.21.0/24
+      AvailabilityZone: !Select [2, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: subnet-jeA0S9V101pr5d-002
+        - Key: Role
+          Value: VyOS
+
+#################################################
+# RouteTables
+#################################################
+
+  RouteTableVPC1:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC1
+      Tags:
+        - Key: Name
+          Value: subnet-jeA0S9V101pr2a-001-rtb-001
+
+  RouteTableVPC2:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC2
+      Tags:
+        - Key: Name
+          Value: subnet-jeA0S9V101pr5a-002-rtb-001

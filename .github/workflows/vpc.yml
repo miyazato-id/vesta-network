@@ -13,13 +13,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          # サブモジュール（cfnフォルダの中身）も同時に取得する設定です
-          submodules: true
 
       - name: Install cfn-lint
         run: pip install cfn-lint
 
       - name: Run cfn-lint
-        # コマンドの後ろのコメントを削除しました
-        run: cfn-lint vpc.yml 
+        run: cfn-lint vpc.yml
