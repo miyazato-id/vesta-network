@@ -1,49 +1,45 @@
-name: AWS OIDC Test
+name: VPC CI/CD
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request: {}
 
+# OIDC 認証とコード取得に必要な権限を設定
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  test:
+  cfn-lint:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install cfn-lint
+        run: pip install cfn-lint
+
+      - name: Run cfn-lint
+        run: cfn-lint cfn/vpc.yml
+
+      # cfn-lint が成功したら AWS に OIDC 接続
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::473427586283:role/GitHubDeployRole
           aws-region: ap-northeast-1
 
+      # 接続確認
       - name: Verify Identity
         run: aws sts get-caller-identity
 
+      # AWS へ VPC をデプロイ
       - name: Deploy VPC
         run: |
           aws cloudformation deploy \
             --stack-name vesta-vpc-dev \
-            --template-file cfn/accounts/app/network/vpc.yaml \
-            --region ap-northeast-1
-
-      - name: Deploy Subnet
-        run: |
-          aws cloudformation deploy \
-            --stack-name vesta-subnet-dev \
-            --template-file cfn/accounts/app/network/subnet.yaml \
-            --parameter-overrides VpcId=vpc-0446ede8899eef348 \
-            --region ap-northeast-1
-
-      - name: Deploy Route Association
-        run: |
-          aws cloudformation deploy \
-            --stack-name vesta-route-dev \
-            --template-file cfn/accounts/app/network/route.yaml \
-            --parameter-overrides RouteTableId=rtb-05feff53d4df14233 SubnetId=subnet-0560ca82ddd230506 \
+            --template-file cfn/vpc.yml \
             --region ap-northeast-1
