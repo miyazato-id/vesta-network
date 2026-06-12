@@ -22,4 +22,4 @@ jobs:
 
       - name: Run cfn-lint
         # コマンドの後ろのコメントを削除しました
-        run: cfn-lint cfn/vpc.yml 
+        run: cfn-lint vpc.yml 
